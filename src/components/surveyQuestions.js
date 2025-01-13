@@ -33,12 +33,12 @@ export const questions = [
     id: "Q4",
     text: "Ce lieu est-il … ?",
     options: [
-      { id: 1, text: "Votre domicile", next: "Q5" },
-      { id: 2, text: "Votre lieu de travail habituel", next: "Q5" },
-      { id: 3, text: "Un lieu de rendez-vous professionnel", next: "Q5" },
-      { id: 4, text: "Votre établissement scolaire, université", next: "Q5" },
-      { id: 5, text: "Un lieu d'achats, courses, …", next: "Q5" },
-      { id: 6, text: "Un lieu de loisirs", next: "Q5" },
+      { id: 1, text: "Votre domicile", next: "Q5a" },
+      { id: 2, text: "Votre lieu de travail habituel", next: "Q5a" },
+      { id: 3, text: "Un lieu de rendez-vous professionnel", next: "Q5a" },
+      { id: 4, text: "Votre établissement scolaire, université", next: "Q5a" },
+      { id: 5, text: "Un lieu d'achats, courses, …", next: "Q5a" },
+      { id: 6, text: "Un lieu de loisirs", next: "Q5a" },
       { id: 7, text: "Autres", next: "Q4_autre" }
     ]
   },
@@ -46,7 +46,21 @@ export const questions = [
     id: "Q4_autre",
     text: "Précisez",
     freeText: true,
-    next: "Q5"
+    next: "Q5a"
+  },
+  {
+    id: "Q5a",
+    text: "Dans quelle commune vous rendez-vous ?",
+    options: [
+      { id: 1, text: "Versailles", next: "Q5_quartier" },
+      { id: 2, text: "Autre", next: "Q5" },
+    ]
+  },
+  {
+    id: "Q5_quartier",
+    text: "Précisez le quartier",
+    freeText: true,
+    next: "Q6"
   },
   {
     id: "Q5",
@@ -77,9 +91,9 @@ export const questions = [
     id: "Q7",
     text: "Par quelle entrée êtes vous arrivé à la gare ?",
     options: [
-      { id: 1, text: "Parvis Nord", next: "Q8" },
-      { id: 2, text: "Accès gare routière", next: "Q8" },
-      { id: 3, text: "Accès Porte de Buc (accès sud)", next: "Q8" }
+      { id: 1, text: "Parvis Nord", next: "Q11" },
+      { id: 2, text: "Accès gare routière", next: "Q11" },
+      { id: 3, text: "Accès Porte de Buc (accès sud)", next: "Q11" }
     ]
   },
   {
@@ -88,10 +102,10 @@ export const questions = [
     options: [
       { id: 1, text: "en voiture conducteur", next: "Q9" },
       { id: 2, text: "en voiture passager", next: "Q10" },
-      { id: 3, text: "en deux-roues motorisés", next: "Q11" },
-      { id: 4, text: "en bus/car", next: "Q11" },
+      { id: 3, text: "en deux-roues motorisés", next: "Q12a" },
+      { id: 4, text: "en bus/car", next: "Q14" },
       { id: 5, text: "à vélo", next: "Q13a" },
-      { id: 6, text: "à pied exclusivement", next: "Q11" },
+      { id: 6, text: "à pied exclusivement", next: "Q14" },
       { id: 7, text: "autres", next: "Q8_autre" }
     ]
   },
@@ -99,30 +113,30 @@ export const questions = [
     id: "Q8_autre",
     text: "Précisez le mode de transport",
     freeText: true,
-    next: "Q11"
+    next: "Q14"
   },
   {
     id: "Q9",
     text: "Comment êtes-vous venu en voiture ?",
     options: [
-      { id: 1, text: "Seul", next: "Q11" },
-      { id: 2, text: "en co-voiturage", next: "Q11" },
-      { id: 3, text: "à plusieurs hors co-voiturage", next: "Q11" }
+      { id: 1, text: "Seul", next: "Q12a" },
+      { id: 2, text: "en co-voiturage", next: "Q12a" },
+      { id: 3, text: "à plusieurs hors co-voiturage", next: "Q12a" }
     ]
   },
   {
     id: "Q10",
     text: "Voiture passager :",
     options: [
-      { id: 1, text: "Déposé", next: "Q11" },
-      { id: 2, text: "en co-voiturage", next: "Q11" }
+      { id: 1, text: "Déposé", next: "Q14" },
+      { id: 2, text: "en co-voiturage", next: "Q14" }
     ]
   },
   {
     id: "Q11",
-    text: "Combien de temps avez-vous mis pour arriver à la gare où nous nous trouvons actuellement ?",
+    text: "Combien de temps avez-vous mis pour arriver à la gare où nous nous trouvons actuellement ? (temps en minutes)",
     freeText: true,
-    next: "Q12a"
+    next: "Q8"
   },
   {
     id: "Q12a",
@@ -139,17 +153,17 @@ export const questions = [
     id: "Q12_voirie",
     text: "Précisez le lieu de stationnement",
     freeText: true,
-    next: "Q11"
+    next: "Q12b"
   },
   {
     id: "Q12_autre",
     text: "Précisez le parking",
     freeText: true,
-    next: "Q11"
+    next: "Q12b"
   },
   {
     id: "Q12b",
-    text: "Combien de temps êtes-vous / allez-vous rester stationné ?",
+    text: "Combien de temps êtes-vous / allez-vous rester stationné ? (temps en heures)",
     freeText: true,
     next: "Q12c"
   },

@@ -34,10 +34,11 @@
       <!-- Start Survey Step -->
       <div v-else-if="currentStep === 'start'" class="start-survey-container">
         <h2>
-          Bonjour,<br> pour mieux connaître les usagers de la gare de Versailles,<br>
+          Bonjour,<br />
+          pour mieux connaître les usagers de la gare de Versailles,<br />
           Versailles Grand Parc et la SNCF souhaiteraient en savoir plus sur
-          votre déplacement en cours.<br> Auriez-vous quelques secondes à nous
-          accorder ?»
+          votre déplacement en cours.<br />
+          Auriez-vous quelques secondes à nous accorder ?»
         </h2>
         <h2></h2>
         <button @click="startSurvey" class="btn-next">
@@ -362,12 +363,25 @@ const selectAnswer = (option) => {
     const questionId = currentQuestion.value.id;
     answers.value[questionId] = option.id;
 
-    // Only for QP4 and QNV3 option 1 (Dunkerque)
-    if ((questionId === "Q2") && option.id === 1) {
-      answers.value[`${questionId}__COMMUNE`] = "VERSAILLES"; // Note the double underscore
-      answers.value[`${questionId}__CODE_INSEE`] = "78646"; // Note the double underscore
-      answers.value[`${questionId}__COMMUNE_LIBRE`] = ""; // Note the double underscore
+    // For Q2 option 1 (Versailles)
+    if (questionId === "Q2" && option.id === 1) {
+      // Also set Q3 values when Versailles is selected
+      answers.value[`Q3_COMMUNE`] = "VERSAILLES";
+      answers.value[`Q3_CODE_INSEE`] = "78646";
+      answers.value[`Q3_COMMUNE_LIBRE`] = "";
     }
+    if (questionId === "Q5a" && option.id === 1) {
+      // Also set Q3 values when Versailles is selected
+      answers.value[`Q5_COMMUNE`] = "VERSAILLES";
+      answers.value[`Q5_CODE_INSEE`] = "78646";
+      answers.value[`Q5_COMMUNE_LIBRE`] = "";
+    }
+
+    // Debug log all answers
+    console.log(
+      "All answers after selection:",
+      JSON.parse(JSON.stringify(answers.value))
+    );
 
     if (questionId === "Q1") {
       currentStep.value = "start";
@@ -381,7 +395,17 @@ const selectAnswer = (option) => {
 
 const handleFreeTextAnswer = () => {
   if (currentQuestion.value) {
-    answers.value[currentQuestion.value.id] = freeTextAnswer.value;
+    const questionId = currentQuestion.value.id;
+    answers.value[questionId] = freeTextAnswer.value;
+
+    // Add logging for Q3_quartier responses
+    if (questionId === "Q3_quartier") {
+      console.log("Q3_quartier answer set:", {
+        quartier: freeTextAnswer.value,
+        allAnswers: JSON.parse(JSON.stringify(answers.value)),
+      });
+    }
+
     if (currentQuestion.value.next === "end") {
       finishSurvey();
     } else {
@@ -465,7 +489,11 @@ const previousQuestion = () => {
 const finishSurvey = async () => {
   isSurveyComplete.value = true;
   const now = new Date();
-  logAnswers(); // Log all answers before saving to Firebase
+
+  console.log(
+    "Final answers before saving:",
+    JSON.parse(JSON.stringify(answers.value))
+  ); // Debug log
 
   const uniqueId = await getNextId();
 
@@ -490,7 +518,7 @@ const finishSurvey = async () => {
     surveyData[key] = answers.value[key];
   });
 
-  console.log("Survey data to be saved:", surveyData);
+  console.log("Final survey data to be saved:", surveyData); // Debug log
 
   try {
     await addDoc(surveyCollectionRef, surveyData);

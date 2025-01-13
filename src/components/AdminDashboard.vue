@@ -22,17 +22,22 @@
     <!-- Admin Dashboard Modal -->
     <div v-if="showAdminDashboard" class="modal">
       <div class="modal-content admin-dashboard">
-        <button class="close" @click="showAdminDashboard = false">&times;</button>
+        <button class="close" @click="showAdminDashboard = false">
+          &times;
+        </button>
         <h2>Tableau de Bord Admin</h2>
-        
+
         <!-- Added filter checkbox -->
-        <div style="margin-bottom: 20px;">
-          <label style="color: #ecf0f1; display: flex; align-items: center; gap: 10px;">
-            <input
-              type="checkbox"
-              v-model="showTodayOnly"
-              style="margin: 0;"
-            >
+        <div style="margin-bottom: 20px">
+          <label
+            style="
+              color: #ecf0f1;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            "
+          >
+            <input type="checkbox" v-model="showTodayOnly" style="margin: 0" />
             Afficher uniquement les enquêtes d'aujourd'hui
           </label>
         </div>
@@ -84,8 +89,8 @@ const surveyCollectionRef = collection(db, "Versailles-chantiers");
 const getTodayDateString = () => {
   const now = new Date();
   // Format as DD-MM-YYYY to match your Firebase date format
-  const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0");
   const year = now.getFullYear();
   return `${day}-${month}-${year}`;
 };
@@ -103,10 +108,10 @@ const signIn = () => {
 const fetchDashboardData = async () => {
   try {
     let queryRef = surveyCollectionRef;
-    
+
     if (showTodayOnly.value) {
       const today = getTodayDateString();
-      console.log('Filtering for date:', today); // Debug log
+      console.log("Filtering for date:", today); // Debug log
       queryRef = query(surveyCollectionRef, where("DATE", "==", today));
     }
 
@@ -116,7 +121,7 @@ const fetchDashboardData = async () => {
     const enqueteurCounts = {};
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log('Document date:', data.DATE); // Debug log
+      console.log("Document date:", data.DATE); // Debug log
       const enqueteur = data.ENQUETEUR || "Unknown";
       enqueteurCounts[enqueteur] = (enqueteurCounts[enqueteur] || 0) + 1;
     });
@@ -131,24 +136,29 @@ const fetchDashboardData = async () => {
 const downloadData = async () => {
   try {
     let queryRef = surveyCollectionRef;
-    
+
     if (showTodayOnly.value) {
       const today = getTodayDateString();
       queryRef = query(surveyCollectionRef, where("DATE", "==", today));
     }
 
     const querySnapshot = await getDocs(queryRef);
-    
+
     const headerOrder = [
       "ID_questionnaire",
       "ENQUETEUR",
       "DATE",
       "JOUR",
       "HEURE_DEBUT",
-      "HEURE_FIN"
+      "HEURE_FIN",
     ];
 
     props.questions.forEach((question) => {
+      // Skip Q2 and Q5a questions
+      if (question.id === "Q2" || question.id === "Q5a") {
+        return;
+      }
+
       if (question.usesCommuneSelector) {
         headerOrder.push(
           `${question.id}_COMMUNE`,
@@ -187,7 +197,10 @@ const downloadData = async () => {
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filePrefix = showTodayOnly.value ? "Today_" : "";
-    XLSX.writeFile(workbook, `${filePrefix}Versailles-chantiers_Survey_Data_${timestamp}.xlsx`);
+    XLSX.writeFile(
+      workbook,
+      `${filePrefix}Versailles-chantiers_Survey_Data_${timestamp}.xlsx`
+    );
   } catch (error) {
     console.error("Error downloading data:", error);
     alert("Erreur lors du téléchargement des données");
