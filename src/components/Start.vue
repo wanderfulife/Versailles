@@ -53,7 +53,7 @@
 
           <!-- PDF Button for Q3a and Q3a_nonvoyageur -->
           <button
-            v-if="['QNV2A', 'QP3A'].includes(currentQuestion.id)"
+            v-if="['Q13a'].includes(currentQuestion.id)"
             @click="showPdf = true"
             class="btn-pdf"
           >
@@ -174,7 +174,7 @@
     <div class="footer">
       <AdminDashboard :questions="questions" />
     </div>
-    <!-- PDF Modal -->
+
     <div v-if="showPdf" class="modal">
       <div class="modal-content pdf-content">
         <span class="close" @click="showPdf = false">&times;</span>
